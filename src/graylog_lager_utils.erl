@@ -59,10 +59,12 @@ term2bin(P) when is_float(P) ->
 term2bin(Other) ->
     list_to_binary(io_lib:format("~p",[Other])).
 
+term2json(L) when is_list(L) ->
+    list_to_binary(L);
 term2json(P) when is_pid(P) ->
     list_to_binary(pid_to_list(P));
-term2json(P) when is_atom(P) ->
-    atom_to_binary(P, latin1);
+term2json(P) when is_tuple(P) ->
+    list_to_binary(io_lib:format("~p",[P]));
 term2json(Other) ->
     Other.
 
