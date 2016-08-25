@@ -5,6 +5,7 @@
     lookup/2,
     lookup/3,
     unix_timestamp/1,
+    severity2int/1,
     term2bin/1,
     term2json/1,
     hostname/0
@@ -23,6 +24,25 @@ lookup(Key, List, Default) ->
 
 unix_timestamp({Mega, Sec, Micro}) ->
     Mega * 1000000 + Sec + Micro / 1000000.
+
+severity2int(debug) ->
+    7;
+severity2int(info) ->
+    6;
+severity2int(notice) ->
+    5;
+severity2int(warning) ->
+    4;
+severity2int(error) ->
+    3;
+severity2int(critical) ->
+    2;
+severity2int(alert) ->
+    1;
+severity2int(emergency) ->
+    0;
+severity2int(_) ->
+    7.
 
 term2bin(L) when is_binary(L) ->
     L;
@@ -48,4 +68,4 @@ term2json(Other) ->
 
 hostname() ->
     {ok, Host} = inet:gethostname(),
-    Host.
+    term2bin(Host).

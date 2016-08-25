@@ -2,7 +2,7 @@
     {description, "An Erlang graylog module for lager"},
     {vsn, "1.0.0"},
     {registered, []},
-    {applications, [kernel, stdlib]},
+    {applications, [kernel, stdlib, jsonx]},
     {modules, [graylog_lager_udp_backend]},
     {env, []}
 ]}.
