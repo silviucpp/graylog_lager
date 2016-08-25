@@ -1,0 +1,8 @@
+{application, graylog_lager, [
+    {description, "An Erlang graylog module for lager"},
+    {vsn, "1.0.0"},
+    {registered, []},
+    {applications, [kernel, stdlib]},
+    {modules, [graylog_lager_udp_backend]},
+    {env, []}
+]}.
