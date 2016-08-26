@@ -10,7 +10,7 @@ format(Message, Config, _Colors) ->
 
 format(Message, Config) ->
     JsonPayload = jsonx:encode(get_raw_data(Message)),
-    do_compression(JsonPayload, graylog_lager_utils:lookup(compression, Config)).
+    do_compression(JsonPayload, graylog_lager_utils:lookup(compression, Config, disabled)).
 
 get_raw_data(Message) ->
     [
@@ -31,7 +31,7 @@ get_metadata([{K,V}|T], Acc) ->
     NewK = <<"_", (graylog_lager_utils:term2bin(K))/binary>>,
     get_metadata(T, [{NewK, graylog_lager_utils:term2json(V)} | Acc]).
 
-do_compression(Data, undefined) ->
+do_compression(Data, disabled) ->
     Data;
 do_compression(Data, gzip) ->
     zlib:gzip(Data);
