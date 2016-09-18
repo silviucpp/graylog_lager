@@ -9,7 +9,7 @@ format(Message, Config, _Colors) ->
     format(Message, Config).
 
 format(Message, Config) ->
-    JsonPayload = jsonx:encode(get_raw_data(Message, Config)),
+    JsonPayload = jsone:encode(get_raw_data(Message, Config)),
     do_compression(JsonPayload, graylog_lager_utils:lookup(compression, Config, disabled)).
 
 get_raw_data(Message, Config) ->
