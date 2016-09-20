@@ -64,7 +64,14 @@ handle_event({log, MessageInner}, #state{level=L, name = Name, formatter=Formatt
     case lager_util:is_loggable(MessageInner, L, Name) of
         true ->
             Msg = Formatter:format(MessageInner,FormatConfig),
-            send(State, Msg, byte_size(Msg)),
+
+            case is_binary(Msg) of
+                true ->
+                    send(State, Msg, byte_size(Msg));
+                _ ->
+                    ?INT_LOG(error, "dropped message. failed to encode: ~p ", [Msg])
+            end,
+
             {ok, State};
         _ ->
             {ok, State}
