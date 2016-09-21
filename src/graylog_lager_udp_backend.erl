@@ -63,13 +63,13 @@ handle_call(_Request, State) ->
 handle_event({log, MessageInner}, #state{level=L, name = Name, formatter=Formatter, format_config=FormatConfig} = State) ->
     case lager_util:is_loggable(MessageInner, L, Name) of
         true ->
-            Msg = Formatter:format(MessageInner,FormatConfig),
+            Msg = Formatter:format(MessageInner, FormatConfig),
 
             case is_binary(Msg) of
                 true ->
                     send(State, Msg, byte_size(Msg));
                 _ ->
-                    ?INT_LOG(error, "hexed message. json encode failed: ~p", [graylog_lager_utils:to_hex(MessageInner)])
+                    ?INT_LOG(error, "hexed message. json encode failed: ~p", [mochihex:to_hex(term_to_binary(MessageInner))])
             end,
 
             {ok, State};

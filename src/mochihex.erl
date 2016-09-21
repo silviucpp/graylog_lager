@@ -32,6 +32,8 @@ to_hex(0) ->
     "0";
 to_hex(I) when is_integer(I), I > 0 ->
     to_hex_int(I, []);
+to_hex(B) when is_binary(B)->
+    to_hex(B, []);
 to_hex(B) ->
     to_hex(iolist_to_binary(B), []).
 
