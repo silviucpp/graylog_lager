@@ -69,7 +69,7 @@ handle_event({log, MessageInner}, #state{level=L, name = Name, formatter=Formatt
                 true ->
                     send(State, Msg, byte_size(Msg));
                 _ ->
-                    ?INT_LOG(error, "dropped message. failed to encode: ~p ", [Msg])
+                    ?INT_LOG(error, "hexed message. json encode failed: ~p", [graylog_lager_utils:to_hex(MessageInner)])
             end,
 
             {ok, State};

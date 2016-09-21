@@ -8,6 +8,7 @@
     severity2int/1,
     term2bin/1,
     term2json/1,
+    to_hex/1,
     hostname/0
 ]).
 
@@ -67,6 +68,13 @@ term2json(P) when is_tuple(P) ->
     list_to_binary(io_lib:format("~p", [P]));
 term2json(Other) ->
     Other.
+
+to_hex(Value) when is_list(Value) ->
+    mochihex:to_hex(Value);
+to_hex(Value) when is_binary(Value) ->
+    mochihex:to_hex(binary_to_list(Value));
+to_hex(Value) ->
+    to_hex(term_to_binary(Value)).
 
 hostname() ->
     {ok, Host} = inet:gethostname(),
