@@ -1,9 +1,21 @@
 {application, graylog_lager, [
     {description, "An Erlang graylog module for lager"},
-    {vsn, "1.0.0"},
+    {licenses, ["MIT"]},
+    {links,[{"Github","https://github.com/silviucpp/graylog_lager"}]},
+    {vsn, "1.1.0"},
     {registered, []},
-    {applications, [kernel, stdlib]},
-    {included_applications, [jsone]},
+    {applications, [
+        kernel,
+        stdlib,
+        jsone
+    ]},
     {modules, [graylog_lager_udp_backend]},
-    {env, []}
+    {env, []},
+    {files, [
+        "LICENSE*",
+        "*.MD",
+        "rebar.config",
+        "rebar.lock",
+        "src/*.erl"
+    ]}
 ]}.

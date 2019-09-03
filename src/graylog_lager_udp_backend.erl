@@ -1,20 +1,35 @@
 -module(graylog_lager_udp_backend).
--author("silviu.caragea").
 
 -include_lib("lager/include/lager.hrl").
 
 -behaviour(gen_event).
 
-%http://docs.graylog.org/en/2.0/pages/gelf.html
+% http://docs.graylog.org/en/3.1/pages/gelf.html
 
 -define(CHUNK_GELF_ID, <<30,15>>).
 -define(CHUNK_MAX_COUNT, 128).
 -define(CHUNK_SIZE_LAN, 8154).
 -define(CHUNK_SIZE_WAN, 1420).
 
--export([init/1, handle_call/2, handle_event/2, handle_info/2, terminate/2, code_change/3]).
+-export([
+    init/1,
+    handle_call/2,
+    handle_event/2,
+    handle_info/2,
+    terminate/2,
+    code_change/3
+]).
 
--record(state, {name, address, port, socket, level, formatter, format_config, chunk_size}).
+-record(state, {
+    name,
+    address,
+    port,
+    socket,
+    level,
+    formatter,
+    format_config,
+    chunk_size
+}).
 
 -define(DEFAULT_GELF_FORMATTER, graylog_lager_gelf_formatter).
 

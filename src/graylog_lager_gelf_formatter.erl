@@ -1,7 +1,9 @@
 -module(graylog_lager_gelf_formatter).
--author("silviu.caragea").
 
--export([format/2, format/3]).
+-export([
+    format/2,
+    format/3
+]).
 
 -define(GELF_VERSION, <<"1.1">>).
 

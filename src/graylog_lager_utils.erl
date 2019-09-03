@@ -1,5 +1,4 @@
 -module(graylog_lager_utils).
--author("silviu.caragea").
 
 -export([
     lookup/2,

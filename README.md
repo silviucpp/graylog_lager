@@ -55,5 +55,5 @@ Backend configuration parameters:
 - `extra_fields`: optional proplist of `{name, value}`, they will be sent as additional fields to graylog. The name must be a binary starting with an underscore, while the value must be any binary.
 
 
-[1]:https://github.com/basho/lager
-[2]:http://docs.graylog.org/en/2.0/pages/gelf.html
+[1]:https://github.com/erlang-lager/lager
+[2]:http://docs.graylog.org/en/3.1/pages/gelf.html

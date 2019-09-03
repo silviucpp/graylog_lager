@@ -4,3 +4,5 @@
 /.rebar/
 /ebin/
 /log/
+/test/
+/_build/
