@@ -36,11 +36,11 @@
 init(Config)->
     Level = graylog_lager_utils:lookup(level, Config, debug),
     Formatter = graylog_lager_utils:lookup(formatter, Config, ?DEFAULT_GELF_FORMATTER),
-    FormatConfig = graylog_lager_utils:lookup(format_config, Config, []),
+    FormatConfig0 = graylog_lager_utils:lookup(format_config, Config, []),
     InetFamily = graylog_lager_utils:lookup(inet_family, Config, inet),
     Host = graylog_lager_utils:lookup(host, Config),
     Port = graylog_lager_utils:lookup(port, Config),
-    Name = graylog_lager_utils:lookup(name, Config, {Host,Port}),
+    Name = graylog_lager_utils:lookup(name, Config, {Host, Port}),
     ChunkSize = graylog_lager_utils:lookup(chunk_size, Config, ?CHUNK_SIZE_LAN),
 
     validate_conf({host, Host}),
@@ -48,8 +48,14 @@ init(Config)->
     validate_conf({level, Level}),
     validate_conf({chunk_size, ChunkSize}),
 
-    {ok, Address} = inet:getaddr(Host, InetFamily),
+    FormatConfig = case graylog_lager_utils:lookup(hostname, FormatConfig0) of
+        undefined ->
+            [{hostname, graylog_lager_utils:hostname()}| FormatConfig0];
+        _ ->
+            FormatConfig0
+    end,
 
+    {ok, Address} = inet:getaddr(Host, InetFamily),
     {ok, Socket} = gen_udp:open(0, [binary, {active, false}]),
 
     {ok, #state{
@@ -84,9 +90,8 @@ handle_event({log, MessageInner}, #state{level=L, name = Name, formatter=Formatt
                 true ->
                     send(State, Msg, byte_size(Msg));
                 _ ->
-                    ?INT_LOG(error, "hexed message. json encode failed: ~p", [mochihex:to_hex(term_to_binary(MessageInner))])
+                    ?INT_LOG(error, "hexed message. json encode failed: ~p", [graylog_hex:bin2hex(term_to_binary(MessageInner))])
             end,
-
             {ok, State};
         _ ->
             {ok, State}
