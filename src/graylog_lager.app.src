@@ -2,7 +2,7 @@
     {description, "An Erlang graylog module for lager"},
     {licenses, ["MIT"]},
     {links,[{"Github","https://github.com/silviucpp/graylog_lager"}]},
-    {vsn, "1.4.0"},
+    {vsn, "1.4.1"},
     {registered, []},
     {applications, [
         kernel,
@@ -16,6 +16,7 @@
         "*.MD",
         "rebar.config",
         "rebar.lock",
-        "src/*.erl"
+        "src/*.erl",
+        "src/*.src"
     ]}
 ]}.
