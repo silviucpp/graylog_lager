@@ -2,12 +2,12 @@
     {description, "An Erlang graylog module for lager"},
     {licenses, ["MIT"]},
     {links,[{"Github","https://github.com/silviucpp/graylog_lager"}]},
-    {vsn, "1.4.1"},
+    {vsn, "1.4.2"},
     {registered, []},
     {applications, [
         kernel,
         stdlib,
-        jsone
+        jiffy
     ]},
     {modules, [graylog_lager_udp_backend]},
     {env, []},

@@ -63,7 +63,7 @@ init(Config)->
     end,
 
     {ok, Address} = inet:getaddr(Host, InetFamily),
-    {ok, Socket} = gen_udp:open(0, [binary, {active, false}]),
+    {ok, Socket} = gen_udp:open(0, [binary, {active, false}, {sndbuf, 60000}]),
 
     {ok, #state{
         level = lager_util:level_to_num(Level),

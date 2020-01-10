@@ -11,8 +11,8 @@ format(Message, Config, _Colors) ->
     format(Message, Config).
 
 format(Message, Config) ->
-    case jsone:try_encode(get_raw_data(Message, Config)) of
-        {ok, JsonPayload} ->
+    case catch jiffy:encode({get_raw_data(Message, Config)}, [force_utf8]) of
+        JsonPayload when is_binary(JsonPayload) ->
             do_compression(JsonPayload, graylog_lager_utils:lookup(compression, Config, disabled));
         UnexpectedMessage ->
             UnexpectedMessage
