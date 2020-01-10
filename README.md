@@ -58,7 +58,13 @@ Backend configuration parameters:
     - `hostname`: optional binary with the hostname. If not provided will be automatically detected.
 - `formatter`: In case you want to change the GELF formatter module. Default : `{formatter, graylog_lager_gelf_formatter}`
 - `chunk_size`: The max size of each UPD packet: default 8154. Valid value between interval 1420 - 8154. Example: `{chunk_size, 8154}`
-- `inet_family`: Specify the inet family. Default to `inet`. Supported values `inet` or `inet6`       
+- `inet_family`: Specify the inet family. Default to `inet`. Supported values `inet` or `inet6`
+
+Also support the following sink configs described in lager readme: 
+
+- `high_water_mark` 
+- `flush_queue` 
+- `flush_threshold`
 
 [1]:https://github.com/erlang-lager/lager
 [2]:http://docs.graylog.org/en/3.1/pages/gelf.html

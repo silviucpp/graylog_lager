@@ -28,7 +28,8 @@
     level,
     formatter,
     format_config,
-    chunk_size
+    chunk_size,
+    shaper :: lager_shaper()
 }).
 
 -define(DEFAULT_GELF_FORMATTER, graylog_lager_gelf_formatter).
@@ -42,6 +43,12 @@ init(Config)->
     Port = graylog_lager_utils:lookup(port, Config),
     Name = graylog_lager_utils:lookup(name, Config, {Host, Port}),
     ChunkSize = graylog_lager_utils:lookup(chunk_size, Config, ?CHUNK_SIZE_LAN),
+
+    Flush = graylog_lager_utils:lookup(flush_queue, Config),
+    HighWaterMark = graylog_lager_utils:lookup(high_water_mark, Config),
+    FlushThr = graylog_lager_utils:lookup(flush_threshold, Config, 0),
+
+    Shaper = lager_util:maybe_flush(Flush, #lager_shaper{hwm=HighWaterMark, flush_threshold = FlushThr, id=Name}),
 
     validate_conf({host, Host}),
     validate_conf({port, Port}),
@@ -66,7 +73,8 @@ init(Config)->
         socket = Socket,
         formatter = Formatter,
         format_config = FormatConfig,
-        chunk_size = ChunkSize
+        chunk_size = ChunkSize,
+        shaper = Shaper
     }}.
 
 handle_call(get_loglevel, #state{level=Level} = State) ->
@@ -81,18 +89,29 @@ handle_call({set_loglevel, Level}, State) ->
 handle_call(_Request, State) ->
     {ok, ok, State}.
 
-handle_event({log, MessageInner}, #state{level=L, name = Name, formatter=Formatter, format_config=FormatConfig} = State) ->
+handle_event({log, MessageInner}, #state{
+    level=L,
+    shaper = Shaper,
+    name = Name,
+    formatter=Formatter,
+    format_config=FormatConfig} = State) ->
+
     case lager_util:is_loggable(MessageInner, L, Name) of
         true ->
-            Msg = Formatter:format(MessageInner, FormatConfig),
-
-            case is_binary(Msg) of
-                true ->
-                    send(State, Msg, byte_size(Msg));
-                _ ->
-                    ?INT_LOG(error, "hexed message. json encode failed: ~p", [graylog_hex:bin2hex(term_to_binary(MessageInner))])
-            end,
-            {ok, State};
+            case lager_util:check_hwm(Shaper) of
+                {true, Drop, #lager_shaper{hwm=Hwm} = NewShaper} ->
+                    case Drop > 0 of
+                        true ->
+                            Report = io_lib:format("graylog_lager_udp_backend dropped ~p messages in the last second that exceeded the limit of ~p messages/sec", [Drop, Hwm]),
+                            write(lager_msg:new(Report, warning, [], []), Formatter, FormatConfig, State);
+                        _ ->
+                           ok
+                    end,
+                    write(MessageInner, Formatter, FormatConfig, State),
+                    {ok, State#state{shaper = NewShaper}};
+                {false, _, #lager_shaper{dropped=D} = NewShaper} ->
+                    {ok, State#state{shaper=NewShaper#lager_shaper{dropped=D+1}}}
+            end;
         _ ->
             {ok, State}
     end;
@@ -109,6 +128,16 @@ code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
 %internal
+
+write(MessageInner, Formatter, FormatConfig, State) ->
+    Msg = Formatter:format(MessageInner, FormatConfig),
+
+    case is_binary(Msg) of
+        true ->
+            send(State, Msg, byte_size(Msg));
+        _ ->
+            ?INT_LOG(error, "hexed message. json encode failed: ~p", [graylog_hex:bin2hex(term_to_binary(MessageInner))])
+    end.
 
 send(State, Msg, MsgLength) when MsgLength =< State#state.chunk_size ->
     ok = gen_udp:send(State#state.socket, State#state.address, State#state.port, Msg);
