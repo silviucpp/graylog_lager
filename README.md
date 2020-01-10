@@ -4,7 +4,6 @@ graylog_lager
 [![Build Status](https://travis-ci.org/silviucpp/graylog_lager.svg?branch=master)](https://travis-ci.org/silviucpp/graylog_lager)
 ![GitHub](https://img.shields.io/github/license/silviucpp/graylog_lager)
 ![Hex.pm](https://img.shields.io/hexpm/v/graylog_lager)
-![Maintenance](https://img.shields.io/maintenance/yes/2019)
 
 [Lager][1] is a standard logging tool for Erlang, this project crates lager formatter to output messages in [GELF format][2] and lager backend to send messages via UDP to a graylog server.
 
