@@ -131,13 +131,7 @@ code_change(_OldVsn, State, _Extra) ->
 
 write(MessageInner, Formatter, FormatConfig, State) ->
     Msg = Formatter:format(MessageInner, FormatConfig),
-
-    case is_binary(Msg) of
-        true ->
-            send(State, Msg, byte_size(Msg));
-        _ ->
-            ?INT_LOG(error, "hexed message. json encode failed: ~p", [graylog_hex:bin2hex(term_to_binary(MessageInner))])
-    end.
+    send(State, Msg, byte_size(Msg)).
 
 send(State, Msg, MsgLength) when MsgLength =< State#state.chunk_size ->
     ok = gen_udp:send(State#state.socket, State#state.address, State#state.port, Msg);
