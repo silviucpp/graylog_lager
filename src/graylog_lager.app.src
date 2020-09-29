@@ -2,7 +2,7 @@
     {description, "An Erlang graylog module for lager"},
     {licenses, ["MIT"]},
     {links,[{"Github","https://github.com/silviucpp/graylog_lager"}]},
-    {vsn, "1.4.2"},
+    {vsn, "1.4.3"},
     {registered, []},
     {applications, [
         kernel,
