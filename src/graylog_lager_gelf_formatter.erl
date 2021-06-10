@@ -45,7 +45,14 @@ get_raw_data(Message, Config) ->
     end.
 
 get_metadata(Msg) ->
-    get_metadata(lager_msg:metadata(Msg), []).
+    {Line, Metadata} = extract_line(lager_msg:metadata(Msg)),
+
+    case Line of
+        null ->
+            get_metadata(Metadata, []);
+        _ ->
+            get_metadata(Metadata, [{<<"_line">>, Line}])
+    end.
 
 get_metadata([{K, V} | T], Acc) ->
     get_metadata(T, [{<<"_", (graylog_lager_utils:term2bin(K))/binary>>, graylog_lager_utils:term2bin(V)} | Acc]);
@@ -58,3 +65,16 @@ do_compression(Data, gzip) ->
     zlib:gzip(Data);
 do_compression(Data, zlib) ->
     zlib:compress(Data).
+
+extract_line(Metadata0) ->
+    case lists:keytake(line, 1, Metadata0) of
+        {value, {_, Line0}, Metadata} ->
+            case Line0 of
+                {L0, _C0} ->
+                    {L0, Metadata};
+                _ ->
+                    {Line0, Metadata}
+            end;
+        false ->
+            {null, Metadata0}
+    end.
