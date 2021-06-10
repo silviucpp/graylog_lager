@@ -1,7 +1,7 @@
 graylog_lager
 ================
 
-[![Build Status](https://travis-ci.org/silviucpp/graylog_lager.svg?branch=master)](https://travis-ci.org/silviucpp/graylog_lager)
+[![Build Status](https://travis-ci.com/silviucpp/graylog_lager.svg?branch=master)](https://travis-ci.com/silviucpp/graylog_lager)
 ![GitHub](https://img.shields.io/github/license/silviucpp/graylog_lager)
 ![Hex.pm](https://img.shields.io/hexpm/v/graylog_lager)
 
