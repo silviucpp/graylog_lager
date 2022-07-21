@@ -18,6 +18,14 @@ matrix:
     - os: osx
       osx_image: xcode12.2
       language: generic
+      env:
+        - HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=true
+        - HOMEBREW_NO_INSTALL_UPGRADE=true
+        - HOMEBREW_NO_INSTALL_CLEANUP=true
+      cache:
+        directories:
+          - $HOME/Library/Caches/Homebrew
+          - /usr/local/Homebrew
 
 before_script:
 - if [[ $TRAVIS_OS_NAME == osx ]]; then brew install --force-bottle erlang || true; fi
